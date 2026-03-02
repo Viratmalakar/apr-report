@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Agent Performance Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="/static/script.js"></script>
+<title>Agent Performance Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="/static/script.js"></script>
 </head>
 <body class="bg">
 
@@ -15,12 +15,18 @@
 
 <h2 class="header">Agent Performance Dashboard</h2>
 
+<div class="filter-section">
+    <form method="post">
+        <input type="date" name="filter_date">
+        <button type="submit">Apply Date Filter</button>
+    </form>
+</div>
+
 <div class="summary">
     <div class="box">TOTAL IVR<br>{{summary.total_ivr}}</div>
     <div class="box">TOTAL MATURE<br>{{summary.total_mature}}</div>
     <div class="box">IB MATURE<br>{{summary.ib_mature}}</div>
     <div class="box">OB MATURE<br>{{summary.ob_mature}}</div>
-    <div class="box">TOTAL TALK<br>{{summary.total_talk}}</div>
     <div class="box">AHT<br>{{summary.aht}}</div>
     <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
 </div>
@@ -31,22 +37,22 @@
 
 <div class="table-container" id="tableSection">
 <table id="dataTable">
-    <thead>
-        <tr>
-            {% for col in table[0].keys() %}
-            <th>{{col}}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in table %}
-        <tr>
-            {% for value in row.values() %}
-            <td>{{value}}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tbody>
+<thead>
+<tr>
+{% for col in table[0].keys() %}
+<th>{{col}}</th>
+{% endfor %}
+</tr>
+</thead>
+<tbody>
+{% for row in table %}
+<tr>
+{% for value in row.values() %}
+<td>{{value}}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody>
 </table>
 </div>
 
