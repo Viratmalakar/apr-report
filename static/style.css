@@ -1,1 +1,118 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at top, #1b1440, #0a071a);
+    color: white;
+}
 
+/* Upload Page */
+.upload-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-box {
+    background: rgba(255,255,255,0.05);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 25px rgba(255,215,0,0.4);
+}
+
+.file-group {
+    margin: 20px 0;
+}
+
+.upload-label {
+    display: inline-block;
+    background: gold;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.upload-label input {
+    display: none;
+}
+
+.main-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: gold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Table */
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 2px solid gold;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: linear-gradient(45deg, gold, orange);
+    color: black;
+    padding: 10px;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+tr:hover {
+    background: rgba(255,215,0,0.1);
+}
+
+/* Scrollbar */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: gold;
+    border-radius: 10px;
+}
+
+/* Loading Overlay */
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000014;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(255,255,255,0.2);
+    border-top: 5px solid gold;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
