@@ -3,31 +3,47 @@ body.bg {
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     color: white;
-    overflow-x: hidden;
+    text-align: center;
 }
 
-/* Particle Background */
 #particles-js {
     position: fixed;
     width: 100%;
     height: 100%;
     z-index: -1;
-    top: 0;
-    left: 0;
 }
 
-/* Header */
-.header {
-    text-align: center;
-    padding: 25px;
-    font-size: 36px;
+.upload-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-box {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(25px);
+    padding: 50px;
+    border-radius: 25px;
+    box-shadow: 0 0 30px rgba(255,215,0,0.4);
+    width: 420px;
+    animation: glowBorder 3s infinite alternate;
+}
+
+@keyframes glowBorder {
+    from { box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+    to { box-shadow: 0 0 45px gold; }
+}
+
+button {
+    padding: 12px 30px;
+    background: linear-gradient(45deg, #FFD700, #ff9900);
+    border: none;
+    border-radius: 50px;
     font-weight: bold;
-    background: linear-gradient(90deg, #FFD700, #ffae00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    cursor: pointer;
 }
 
-/* Summary Cards */
 .summary {
     display: flex;
     justify-content: center;
@@ -38,46 +54,24 @@ body.bg {
 
 .box {
     background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
     padding: 25px;
     border-radius: 20px;
     width: 190px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
     box-shadow: 0 0 25px rgba(255,215,0,0.4);
-    transition: 0.3s;
+    animation: glowBorder 3s infinite alternate;
 }
 
-.box:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 0 40px gold;
-}
-
-/* Search */
-#search {
-    display: block;
-    margin: 20px auto;
-    padding: 12px 20px;
-    width: 300px;
-    border-radius: 30px;
-    border: none;
-    outline: none;
-}
-
-/* Table */
 .table-container {
     margin: 20px;
     max-height: 450px;
     overflow-y: auto;
-    border-radius: 20px;
 }
 
 table {
-    width: 100%;
+    width: 95%;
+    margin: auto;
     border-collapse: collapse;
     background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(15px);
 }
 
 th {
@@ -86,7 +80,6 @@ th {
     background: linear-gradient(90deg, #FFD700, #ffae00);
     color: black;
     padding: 12px;
-    font-weight: bold;
 }
 
 td {
@@ -94,6 +87,8 @@ td {
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-tr:hover {
-    background: rgba(255,215,0,0.15);
+.alert-red {
+    color: #ff4d4d;
+    font-weight: bold;
+    text-shadow: 0 0 10px red;
 }
