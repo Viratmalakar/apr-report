@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload Reports</title>
+    <title>Agent Performance Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body class="bg">
 
 <div class="upload-wrapper">
     <div class="upload-box">
+
         <h2>Agent Performance Dashboard</h2>
 
         <form action="/dashboard" method="post" enctype="multipart/form-data">
 
             <div class="file-group">
-                <label>Upload Agent Performance Report</label>
-                <input type="file" name="agent_file" onchange="showName(this,'agentName')" required>
+                <h3>APR Report</h3>
+                <label class="upload-label">
+                    Upload File
+                    <input type="file" name="agent_file" onchange="showName(this,'agentName')" required>
+                </label>
                 <p id="agentName" class="file-name"></p>
             </div>
 
             <div class="file-group">
-                <label>Upload CDR Report</label>
-                <input type="file" name="cdr_file" onchange="showName(this,'cdrName')" required>
+                <h3>CDR Report</h3>
+                <label class="upload-label">
+                    Upload File
+                    <input type="file" name="cdr_file" onchange="showName(this,'cdrName')" required>
+                </label>
                 <p id="cdrName" class="file-name"></p>
             </div>
 
-            <button type="submit">Generate Dashboard</button>
+            <button type="submit" class="main-btn">Generate Dashboard</button>
 
         </form>
+
     </div>
 </div>
 
