@@ -1,0 +1,63 @@
+
+body.bg {
+    background: linear-gradient(to right, #0f5132, #198754);
+    font-family: Arial;
+    color: white;
+}
+
+.card {
+    width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background: white;
+    color: black;
+    border-radius: 10px;
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    background: #198754;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+
+.box {
+    background: white;
+    color: black;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.table-container {
+    max-height: 400px;
+    overflow-y: scroll;
+    margin: 20px;
+}
+
+table {
+    width: 100%;
+    background: white;
+    color: black;
+    border-collapse: collapse;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background: #14532d;
+    color: white;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ccc;
+}

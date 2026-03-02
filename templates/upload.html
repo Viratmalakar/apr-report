@@ -1,0 +1,18 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Reports</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg">
+<div class="card">
+    <h2>Upload Reports</h2>
+    <form action="/dashboard" method="post" enctype="multipart/form-data">
+        <input type="file" name="agent_file" required><br><br>
+        <input type="file" name="cdr_file" required><br><br>
+        <button type="submit">Generate Dashboard</button>
+    </form>
+</div>
+</body>
+</html>
