@@ -11,24 +11,22 @@
 
         <h2>Agent Performance Dashboard</h2>
 
-        <form action="/dashboard" method="post" enctype="multipart/form-data">
+        <form id="uploadForm" action="/dashboard" method="post" enctype="multipart/form-data">
 
             <div class="file-group">
                 <h3>APR Report</h3>
                 <label class="upload-label">
                     Upload File
-                    <input type="file" name="agent_file" onchange="showName(this,'agentName')" required>
+                    <input type="file" name="agent_file" required>
                 </label>
-                <p id="agentName" class="file-name"></p>
             </div>
 
             <div class="file-group">
                 <h3>CDR Report</h3>
                 <label class="upload-label">
                     Upload File
-                    <input type="file" name="cdr_file" onchange="showName(this,'cdrName')" required>
+                    <input type="file" name="cdr_file" required>
                 </label>
-                <p id="cdrName" class="file-name"></p>
             </div>
 
             <button type="submit" class="main-btn">Generate Dashboard</button>
@@ -38,10 +36,18 @@
     </div>
 </div>
 
+<!-- Loading Overlay -->
+<div id="loadingOverlay">
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <p class="loading-text">Processing Reports<span class="dots"></span></p>
+    </div>
+</div>
+
 <script>
-function showName(input, id){
-    document.getElementById(id).innerText = input.files[0].name;
-}
+document.getElementById("uploadForm").addEventListener("submit", function(){
+    document.getElementById("loadingOverlay").style.display = "flex";
+});
 </script>
 
 </body>
