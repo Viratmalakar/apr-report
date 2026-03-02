@@ -1,11 +1,21 @@
-
-function searchTable() {
-    let input = document.getElementById("search").value.toLowerCase();
-    let rows = document.querySelectorAll("#dataTable tbody tr");
-
-    rows.forEach(row => {
-        row.style.display = row.innerText.toLowerCase().includes(input)
-            ? ""
-            : "none";
+function copyTablePNG() {
+    html2canvas(document.getElementById("tableSection")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "table.png";
+        link.href = canvas.toDataURL();
+        link.click();
     });
+}
+
+function copyPagePNG() {
+    html2canvas(document.body).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "full_page.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
+
+function resetPage() {
+    window.location.href = "/";
 }
