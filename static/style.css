@@ -1,63 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agent Performance Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js"></script>
+</head>
+<body class="bg">
 
-body.bg {
-    background: linear-gradient(to right, #0f5132, #198754);
-    font-family: Arial;
-    color: white;
-}
+<!-- Gold Particle Background -->
+<div id="particles-js"></div>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
-.card {
-    width: 400px;
-    margin: 100px auto;
-    padding: 30px;
-    background: white;
-    color: black;
-    border-radius: 10px;
-    text-align: center;
-}
+<h2 class="header">Agent Performance Dashboard</h2>
 
-button {
-    padding: 10px 20px;
-    background: #198754;
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
+<div class="summary">
+    <div class="box">TOTAL IVR<br>{{summary.total_ivr}}</div>
+    <div class="box">TOTAL MATURE<br>{{summary.total_mature}}</div>
+    <div class="box">IB MATURE<br>{{summary.ib_mature}}</div>
+    <div class="box">OB MATURE<br>{{summary.ob_mature}}</div>
+    <div class="box">TOTAL TALK<br>{{summary.total_talk}}</div>
+    <div class="box">AHT<br>{{summary.aht}}</div>
+    <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
+</div>
 
-.summary {
-    display: flex;
-    justify-content: space-around;
-    margin: 20px;
-}
+<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent Full Name">
 
-.box {
-    background: white;
-    color: black;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-}
+<div class="table-container">
+<table id="dataTable">
+    <thead>
+        <tr>
+            {% for col in table[0].keys() %}
+            <th>{{col}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table %}
+        <tr>
+            {% for value in row.values() %}
+            <td>{{value}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
 
-.table-container {
-    max-height: 400px;
-    overflow-y: scroll;
-    margin: 20px;
-}
+<script>
+particlesJS("particles-js", {
+  "particles": {
+    "number": { "value": 90 },
+    "color": { "value": ["#FFD700", "#ffae00", "#ffcc00"] },
+    "shape": { "type": "circle" },
+    "opacity": { "value": 0.8, "random": true },
+    "size": { "value": 4, "random": true },
+    "move": {
+      "enable": true,
+      "speed": 2,
+      "direction": "none",
+      "out_mode": "out"
+    }
+  },
+  "interactivity": {
+    "events": {
+      "onhover": { "enable": true, "mode": "repulse" }
+    }
+  },
+  "retina_detect": true
+});
+</script>
 
-table {
-    width: 100%;
-    background: white;
-    color: black;
-    border-collapse: collapse;
-}
-
-th {
-    position: sticky;
-    top: 0;
-    background: #14532d;
-    color: white;
-}
-
-th, td {
-    padding: 8px;
-    border: 1px solid #ccc;
-}
+</body>
+</html>
