@@ -6,143 +6,113 @@ body.bg {
     text-align: center;
 }
 
-/* Particle Background */
-#particles-js {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+/* Upload Page */
+.upload-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-box {
+    background: rgba(255,255,255,0.08);
+    padding: 50px;
+    border-radius: 20px;
+    width: 420px;
+}
+
+.upload-label {
+    display: inline-block;
+    background: linear-gradient(45deg, #FFD700, #ff9900);
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.upload-label input {
+    display: none;
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 14px;
+    color: white;
+}
+
+.main-btn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: linear-gradient(45deg, #FFD700, #ff9900);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
 }
 
 /* Header */
 .header {
-    font-size: 36px;
+    font-size: 32px;
     margin-top: 20px;
-    background: linear-gradient(90deg, #FFD700, #ffae00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    position: relative;
-    z-index: 2;
 }
 
-/* Summary Cards */
+/* Summary */
 .summary {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 20px;
     margin: 30px;
-    position: relative;
-    z-index: 2;
 }
 
 .box {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    padding: 25px;
-    border-radius: 20px;
-    width: 190px;
-    font-weight: bold;
-    box-shadow: 0 0 25px rgba(255,215,0,0.4);
-    animation: glowBorder 3s infinite alternate;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    width: 170px;
 }
 
-/* Search */
-#search {
-    display: block;
-    margin: 20px auto;
-    padding: 12px 20px;
-    width: 300px;
-    border-radius: 30px;
-    border: none;
-    outline: none;
-    position: relative;
-    z-index: 2;
-}
-
-/* 🔥 PREMIUM TABLE CONTAINER */
+/* Table */
 .table-container {
-    margin: 20px auto;
+    width: 95%;
+    margin: auto;
     max-height: 450px;
     overflow-y: auto;
-    border-radius: 20px;
     background: #1c1b2e;
-    position: relative;
-    z-index: 2;
-    padding: 10px;
-
-    /* Gold Border */
-    border: 2px solid rgba(255, 215, 0, 0.6);
-
-    /* Subtle Inner Shadow */
-    box-shadow:
-        inset 0 0 25px rgba(255, 215, 0, 0.15),
-        0 0 25px rgba(255, 215, 0, 0.2);
-}
-
-/* Smooth Gold Scrollbar */
-.table-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.table-container::-webkit-scrollbar-track {
-    background: #1c1b2e;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(#FFD700, #ffae00);
-    border-radius: 10px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-    background: gold;
-}
-
-/* Firefox Scrollbar */
-.table-container {
-    scrollbar-width: thin;
-    scrollbar-color: gold #1c1b2e;
+    border-radius: 15px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background: #1c1b2e;
+}
+
+th, td {
+    border: 1px solid rgba(255,255,255,0.2); /* Light Borders */
+    padding: 8px;
 }
 
 th {
-    position: sticky;
-    top: 0;
     background: linear-gradient(90deg, #FFD700, #ffae00);
     color: black;
-    padding: 12px;
 }
 
-td {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    transition: all 0.3s ease;
+/* Buttons */
+.table-actions {
+    margin-bottom: 10px;
 }
 
-/* 💎 Hover Row Animation */
-tr {
-    transition: transform 0.3s ease, background 0.3s ease;
+.top-right-buttons {
+    position: absolute;
+    right: 20px;
+    top: 20px;
 }
 
-tr:hover {
-    background: rgba(255,215,0,0.12);
-    transform: scale(1.01);
-}
-
-/* Gold Border Glow Animation */
-@keyframes glowBorder {
-    from { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
-    to { box-shadow: 0 0 45px gold; }
-}
-
-/* Red Highlight */
-.alert-red {
-    color: #ff4d4d;
-    font-weight: bold;
-    text-shadow: 0 0 10px red;
+.top-right-buttons button,
+.table-actions button {
+    padding: 8px 15px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(45deg, #FFD700, #ff9900);
+    cursor: pointer;
 }
