@@ -1,26 +1,29 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>Agent Performance Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="/static/script.js"></script>
 </head>
 <body class="bg">
 
+<!-- Gold Particle Background -->
+<div id="particles-js"></div>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
 <h2 class="header">Agent Performance Dashboard</h2>
 
 <div class="summary">
-    <div class="box">IVR HIT<br>{{summary.total_ivr}}</div>
-    <div class="box">MATURE<br>{{summary.total_mature}}</div>
-    <div class="box">IB<br>{{summary.ib_mature}}</div>
-    <div class="box">OB<br>{{summary.ob_mature}}</div>
-    <div class="box">TALK<br>{{summary.total_talk}}</div>
+    <div class="box">TOTAL IVR<br>{{summary.total_ivr}}</div>
+    <div class="box">TOTAL MATURE<br>{{summary.total_mature}}</div>
+    <div class="box">IB MATURE<br>{{summary.ib_mature}}</div>
+    <div class="box">OB MATURE<br>{{summary.ob_mature}}</div>
+    <div class="box">TOTAL TALK<br>{{summary.total_talk}}</div>
     <div class="box">AHT<br>{{summary.aht}}</div>
-    <div class="box">LOGIN<br>{{summary.login_count}}</div>
+    <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
 </div>
 
-<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent">
+<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent Full Name">
 
 <div class="table-container">
 <table id="dataTable">
@@ -42,6 +45,30 @@
     </tbody>
 </table>
 </div>
+
+<script>
+particlesJS("particles-js", {
+  "particles": {
+    "number": { "value": 90 },
+    "color": { "value": ["#FFD700", "#ffae00", "#ffcc00"] },
+    "shape": { "type": "circle" },
+    "opacity": { "value": 0.8, "random": true },
+    "size": { "value": 4, "random": true },
+    "move": {
+      "enable": true,
+      "speed": 2,
+      "direction": "none",
+      "out_mode": "out"
+    }
+  },
+  "interactivity": {
+    "events": {
+      "onhover": { "enable": true, "mode": "repulse" }
+    }
+  },
+  "retina_detect": true
+});
+</script>
 
 </body>
 </html>
