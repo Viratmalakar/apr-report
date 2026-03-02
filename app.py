@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 from datetime import timedelta
+import os
 
 app = Flask(__name__)
 
@@ -16,7 +17,7 @@ def time_to_seconds(val):
     try:
         if isinstance(val, str):
             h, m, s = map(int, val.split(":"))
-            return h*3600 + m*60 + s
+            return h * 3600 + m * 60 + s
         return int(val.total_seconds())
     except:
         return 0
@@ -39,7 +40,7 @@ def dashboard():
     if not agent_file or not cdr_file:
         return "Both files required"
 
-    # Read Files
+    # Read Excel
     agent_df = pd.read_excel(agent_file, header=2)
     cdr_df = pd.read_excel(cdr_file, header=1)
 
@@ -63,19 +64,23 @@ def dashboard():
 
     # ------------------ Time Conversion ------------------
     agent_df["Login_sec"] = agent_df["Total Login Time"].apply(time_to_seconds)
+
     agent_df["Break_sec"] = (
         agent_df["LUNCHBREAK"].apply(time_to_seconds)
         + agent_df["SHORTBREAK"].apply(time_to_seconds)
         + agent_df["TEABREAK"].apply(time_to_seconds)
     )
+
     agent_df["Meeting_sec"] = (
         agent_df["MEETING"].apply(time_to_seconds)
         + agent_df["SYSTEMDOWN"].apply(time_to_seconds)
     )
+
     agent_df["Talk_sec"] = agent_df["Total Talk Time"].apply(time_to_seconds)
 
     agent_df["NetLogin_sec"] = agent_df["Login_sec"] - agent_df["Break_sec"]
 
+    # Convert back to hh:mm:ss
     agent_df["Total Break"] = agent_df["Break_sec"].apply(seconds_to_hms)
     agent_df["Total Meeting"] = agent_df["Meeting_sec"].apply(seconds_to_hms)
     agent_df["Total Net Login"] = agent_df["NetLogin_sec"].apply(seconds_to_hms)
@@ -120,6 +125,7 @@ def dashboard():
 
     merged.drop(columns=["Username_x", "Username_y"], errors="ignore", inplace=True)
 
+    # Fix 0.0 issue
     merged["Total Call"] = merged["Total Call"].fillna(0).astype(int)
     merged["IB Mature"] = merged["IB Mature"].fillna(0).astype(int)
     merged["OB Mature"] = (merged["Total Call"] - merged["IB Mature"]).astype(int)
@@ -149,6 +155,7 @@ def dashboard():
         "login_count": merged["Agent Name"].nunique()
     }
 
+    # ------------------ Final Table ------------------
     display_cols = [
         "Agent Name",
         "Agent Full Name",
@@ -159,13 +166,20 @@ def dashboard():
         "AHT",
         "Total Call",
         "IB Mature",
-        "OB Mature"
+        "OB Mature",
+        "NetLogin_sec",   # for conditional formatting
+        "Break_sec",
+        "Meeting_sec"
     ]
 
-    table = merged[display_cols].to_dict(orient="records")
+    final_df = merged[display_cols]
+
+    table = final_df.to_dict(orient="records")
 
     return render_template("dashboard.html", table=table, summary=summary)
 
+# ------------------ Production Safe ------------------
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
