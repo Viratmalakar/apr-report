@@ -3,12 +3,15 @@
 <head>
     <title>Agent Performance Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="/static/script.js"></script>
 </head>
 <body class="bg">
 
-<div id="particles-js"></div>
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<div class="top-right-buttons">
+    <button onclick="copyPagePNG()">Copy Page (PNG)</button>
+    <button onclick="resetPage()">Reset</button>
+</div>
 
 <h2 class="header">Agent Performance Dashboard</h2>
 
@@ -22,9 +25,11 @@
     <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
 </div>
 
-<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent">
+<div class="table-actions">
+    <button onclick="copyTablePNG()">Copy Full Table (PNG)</button>
+</div>
 
-<div class="table-container">
+<div class="table-container" id="tableSection">
 <table id="dataTable">
     <thead>
         <tr>
@@ -36,33 +41,14 @@
     <tbody>
         {% for row in table %}
         <tr>
-            {% for col, value in row.items() %}
-            <td class="
-                {% if col == 'Total Net Login' and value < '08:00:00' %}alert-red{% endif %}
-                {% if col == 'Total Break' and value > '00:40:00' %}alert-red{% endif %}
-                {% if col == 'Total Meeting' and value > '00:35:00' %}alert-red{% endif %}
-            ">
-                {{value}}
-            </td>
+            {% for value in row.values() %}
+            <td>{{value}}</td>
             {% endfor %}
         </tr>
         {% endfor %}
     </tbody>
 </table>
 </div>
-
-<script>
-particlesJS("particles-js", {
-  "particles": {
-    "number": { "value": 90 },
-    "color": { "value": ["#FFD700", "#ffae00", "#ffcc00"] },
-    "shape": { "type": "circle" },
-    "opacity": { "value": 0.8, "random": true },
-    "size": { "value": 4, "random": true },
-    "move": { "enable": true, "speed": 2 }
-  }
-});
-</script>
 
 </body>
 </html>
