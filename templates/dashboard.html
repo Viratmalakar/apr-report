@@ -7,7 +7,6 @@
 </head>
 <body class="bg">
 
-<!-- Gold Particle Background -->
 <div id="particles-js"></div>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
@@ -23,7 +22,7 @@
     <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
 </div>
 
-<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent Full Name">
+<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent">
 
 <div class="table-container">
 <table id="dataTable">
@@ -37,8 +36,14 @@
     <tbody>
         {% for row in table %}
         <tr>
-            {% for value in row.values() %}
-            <td>{{value}}</td>
+            {% for col, value in row.items() %}
+            <td class="
+                {% if col == 'Total Net Login' and value < '08:00:00' %}alert-red{% endif %}
+                {% if col == 'Total Break' and value > '00:40:00' %}alert-red{% endif %}
+                {% if col == 'Total Meeting' and value > '00:35:00' %}alert-red{% endif %}
+            ">
+                {{value}}
+            </td>
             {% endfor %}
         </tr>
         {% endfor %}
@@ -54,19 +59,8 @@ particlesJS("particles-js", {
     "shape": { "type": "circle" },
     "opacity": { "value": 0.8, "random": true },
     "size": { "value": 4, "random": true },
-    "move": {
-      "enable": true,
-      "speed": 2,
-      "direction": "none",
-      "out_mode": "out"
-    }
-  },
-  "interactivity": {
-    "events": {
-      "onhover": { "enable": true, "mode": "repulse" }
-    }
-  },
-  "retina_detect": true
+    "move": { "enable": true, "speed": 2 }
+  }
 });
 </script>
 
