@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 def clean_columns(df):
     df.columns = df.columns.str.strip()
-    df.columns = df.columns.str.replace(" ", "")
     return df
 
 def time_to_seconds(t):
@@ -30,29 +29,33 @@ def dashboard():
     agent_file = request.files['agent_file']
     cdr_file = request.files['cdr_file']
 
-    agent_df = pd.read_excel(agent_file)
-    cdr_df = pd.read_excel(cdr_file)
+    # ✅ Correct header rows
+    agent_df = pd.read_excel(agent_file, header=2)
+    cdr_df = pd.read_excel(cdr_file, header=1)
 
     agent_df = clean_columns(agent_df)
     cdr_df = clean_columns(cdr_df)
 
-    # ---- Agent Calculations ----
-    agent_df["TotalBreak"] = (
-        agent_df.get("LUNCHBREAK",0) +
-        agent_df.get("SHORTBREAK",0) +
-        agent_df.get("TEABREAK",0)
+    # Agent calculations
+    agent_df["Total Break"] = (
+        agent_df["LUNCHBREAK"] +
+        agent_df["SHORTBREAK"] +
+        agent_df["TEABREAK"]
     )
 
-    agent_df["TotalMeeting"] = (
-        agent_df.get("MEETING",0) +
-        agent_df.get("SYSTEMDOWN",0)
+    agent_df["Total Meeting"] = (
+        agent_df["MEETING"] +
+        agent_df["SYSTEMDOWN"]
     )
 
-    agent_df["TotalNetLogin"] = agent_df["TotalLoginTime"] - agent_df["TotalBreak"]
+    agent_df["Total Net Login"] = (
+        agent_df["Total Login Time"] -
+        agent_df["Total Break"]
+    )
 
-    agent_df["Talk_sec"] = agent_df["TotalTalkTime"].apply(time_to_seconds)
+    agent_df["Talk_sec"] = agent_df["Total Talk Time"].apply(time_to_seconds)
 
-    # ---- CDR Calculations ----
+    # CDR calculations
     cdr_df["Disposition"] = cdr_df["Disposition"].astype(str).str.lower()
 
     mature = cdr_df[
@@ -60,21 +63,32 @@ def dashboard():
         cdr_df["Disposition"].str.contains("transfer", na=False)
     ]
 
-    total_call = mature.groupby("Username").size().reset_index(name="TotalCall")
+    total_call = mature.groupby("Username").size().reset_index(name="Total Call")
 
     ib_mature = mature[
         mature["Campaign"].str.upper() == "CSRINBOUND"
-    ].groupby("Username").size().reset_index(name="IBMature")
+    ].groupby("Username").size().reset_index(name="IB Mature")
 
-    merged = agent_df.merge(total_call, left_on="AgentName", right_on="Username", how="left")
-    merged = merged.merge(ib_mature, left_on="AgentName", right_on="Username", how="left")
+    merged = agent_df.merge(
+        total_call,
+        left_on="Agent Name",
+        right_on="Username",
+        how="left"
+    )
 
-    merged["TotalCall"] = merged["TotalCall"].fillna(0)
-    merged["IBMature"] = merged["IBMature"].fillna(0)
-    merged["OBMature"] = merged["TotalCall"] - merged["IBMature"]
+    merged = merged.merge(
+        ib_mature,
+        left_on="Agent Name",
+        right_on="Username",
+        how="left"
+    )
+
+    merged["Total Call"] = merged["Total Call"].fillna(0)
+    merged["IB Mature"] = merged["IB Mature"].fillna(0)
+    merged["OB Mature"] = merged["Total Call"] - merged["IB Mature"]
 
     merged["AHT_sec"] = merged.apply(
-        lambda x: x["Talk_sec"]/x["TotalCall"] if x["TotalCall"]>0 else 0,
+        lambda x: x["Talk_sec"]/x["Total Call"] if x["Total Call"] > 0 else 0,
         axis=1
     )
 
@@ -82,21 +96,28 @@ def dashboard():
 
     summary = {
         "total_ivr": len(cdr_df),
-        "total_mature": int(merged["TotalCall"].sum()),
-        "ib_mature": int(merged["IBMature"].sum()),
-        "ob_mature": int(merged["OBMature"].sum()),
+        "total_mature": int(merged["Total Call"].sum()),
+        "ib_mature": int(merged["IB Mature"].sum()),
+        "ob_mature": int(merged["OB Mature"].sum()),
         "total_talk": seconds_to_hms(merged["Talk_sec"].sum()),
         "aht": seconds_to_hms(
-            merged["Talk_sec"].sum()/merged["TotalCall"].sum()
-            if merged["TotalCall"].sum()>0 else 0
+            merged["Talk_sec"].sum()/merged["Total Call"].sum()
+            if merged["Total Call"].sum()>0 else 0
         ),
-        "login_count": merged["AgentName"].nunique()
+        "login_count": merged["Agent Name"].nunique()
     }
 
     display_cols = [
-        "AgentName","AgentFullName","TotalLoginTime",
-        "TotalNetLogin","TotalBreak","TotalMeeting",
-        "AHT","TotalCall","IBMature","OBMature"
+        "Agent Name",
+        "Agent Full Name",
+        "Total Login Time",
+        "Total Net Login",
+        "Total Break",
+        "Total Meeting",
+        "AHT",
+        "Total Call",
+        "IB Mature",
+        "OB Mature"
     ]
 
     table = merged[display_cols].to_dict(orient="records")
