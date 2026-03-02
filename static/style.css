@@ -1,74 +1,99 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Agent Performance Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="/static/script.js"></script>
-</head>
-<body class="bg">
+body.bg {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: white;
+    overflow-x: hidden;
+}
 
-<!-- Gold Particle Background -->
-<div id="particles-js"></div>
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+/* Particle Background */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
 
-<h2 class="header">Agent Performance Dashboard</h2>
+/* Header */
+.header {
+    text-align: center;
+    padding: 25px;
+    font-size: 36px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #FFD700, #ffae00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-<div class="summary">
-    <div class="box">TOTAL IVR<br>{{summary.total_ivr}}</div>
-    <div class="box">TOTAL MATURE<br>{{summary.total_mature}}</div>
-    <div class="box">IB MATURE<br>{{summary.ib_mature}}</div>
-    <div class="box">OB MATURE<br>{{summary.ob_mature}}</div>
-    <div class="box">TOTAL TALK<br>{{summary.total_talk}}</div>
-    <div class="box">AHT<br>{{summary.aht}}</div>
-    <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
-</div>
+/* Summary Cards */
+.summary {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 30px;
+}
 
-<input type="text" id="search" onkeyup="searchTable()" placeholder="Search Agent Full Name">
+.box {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    padding: 25px;
+    border-radius: 20px;
+    width: 190px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 0 25px rgba(255,215,0,0.4);
+    transition: 0.3s;
+}
 
-<div class="table-container">
-<table id="dataTable">
-    <thead>
-        <tr>
-            {% for col in table[0].keys() %}
-            <th>{{col}}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in table %}
-        <tr>
-            {% for value in row.values() %}
-            <td>{{value}}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+.box:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 40px gold;
+}
 
-<script>
-particlesJS("particles-js", {
-  "particles": {
-    "number": { "value": 90 },
-    "color": { "value": ["#FFD700", "#ffae00", "#ffcc00"] },
-    "shape": { "type": "circle" },
-    "opacity": { "value": 0.8, "random": true },
-    "size": { "value": 4, "random": true },
-    "move": {
-      "enable": true,
-      "speed": 2,
-      "direction": "none",
-      "out_mode": "out"
-    }
-  },
-  "interactivity": {
-    "events": {
-      "onhover": { "enable": true, "mode": "repulse" }
-    }
-  },
-  "retina_detect": true
-});
-</script>
+/* Search */
+#search {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 20px;
+    width: 300px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+}
 
-</body>
-</html>
+/* Table */
+.table-container {
+    margin: 20px;
+    max-height: 450px;
+    overflow-y: auto;
+    border-radius: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(90deg, #FFD700, #ffae00);
+    color: black;
+    padding: 12px;
+    font-weight: bold;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+tr:hover {
+    background: rgba(255,215,0,0.15);
+}
