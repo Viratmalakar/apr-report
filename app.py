@@ -114,7 +114,6 @@ def dashboard():
             "meeting_class": "red-cell" if meeting_sec > 2100 else ""
         })
 
-    # 🔥 SORTING LOGIC
     data = sorted(
         data,
         key=lambda x: (x["total_call"], x["net_sec"]),
