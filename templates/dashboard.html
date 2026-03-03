@@ -21,10 +21,11 @@
 
 <div class="button-bar" style="text-align:center;margin:20px;">
     <button onclick="window.location.href='/export_excel'">Export to Excel</button>
+    <button onclick="copyTable()">Copy Full Table (PNG)</button>
     <button onclick="location.href='/'">Reset</button>
 </div>
 
-<div class="table-wrapper">
+<div id="tableArea" class="table-wrapper">
 <div class="table-container">
 <table>
 <thead>
@@ -60,6 +61,33 @@
 </table>
 </div>
 </div>
+
+<script>
+function copyTable() {
+
+    const table = document.getElementById("tableArea");
+    const container = document.querySelector(".table-container");
+
+    const originalHeight = container.style.maxHeight;
+    const originalOverflow = container.style.overflow;
+
+    container.style.maxHeight = "none";
+    container.style.overflow = "visible";
+
+    html2canvas(table, {scale:3}).then(canvas => {
+
+        canvas.toBlob(function(blob) {
+            const item = new ClipboardItem({'image/png': blob});
+            navigator.clipboard.write([item]);
+        });
+
+        container.style.maxHeight = originalHeight;
+        container.style.overflow = originalOverflow;
+
+        alert("Full Table Copied in High Quality PNG!");
+    });
+}
+</script>
 
 </body>
 </html>
