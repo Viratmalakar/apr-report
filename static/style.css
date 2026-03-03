@@ -1,31 +1,95 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at 20% 20%, #1a1a2e, #0f0f1a 60%);
+    color: white;
+}
+
+/* HEADER */
+h1 {
+    text-align: center;
+    padding: 20px;
+    color: gold;
+    text-shadow: 0 0 10px rgba(255,215,0,0.6);
+}
+
+/* TABLE CONTAINER */
 .table-container {
     max-height: 500px;
     overflow-y: auto;
     border: 2px solid gold;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(8px);
+}
+
+/* SMOOTH SCROLLBAR */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: gold;
     border-radius: 10px;
 }
 
+/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
+/* HEADER */
 th {
-    background: gold;
+    background: linear-gradient(45deg, gold, #ffcc00);
     color: black;
-    padding: 8px;
+    padding: 10px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
 }
 
+/* CELLS */
 td {
-    padding: 6px;
-    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
     text-align: center;
+    transition: 0.3s;
 }
 
+/* ROW HOVER */
+tr:hover {
+    background: rgba(255,215,0,0.1);
+    transform: scale(1.01);
+}
+
+/* GREEN HIGHLIGHT */
 .green-cell {
-    background: rgba(0,255,0,0.2);
+    background: rgba(0,255,0,0.25);
+    box-shadow: inset 0 0 8px rgba(0,255,0,0.6);
 }
 
+/* RED HIGHLIGHT */
 .red-cell {
-    background: rgba(255,0,0,0.2);
+    background: rgba(255,0,0,0.25);
+    box-shadow: inset 0 0 8px rgba(255,0,0,0.6);
+}
+
+/* BUTTONS */
+button {
+    background: linear-gradient(45deg, gold, #ffcc00);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    transform: scale(1.05);
 }
