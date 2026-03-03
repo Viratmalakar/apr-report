@@ -1,23 +1,20 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import pandas as pd
+from datetime import datetime
+import io
 
 app = Flask(__name__)
 
-def hms_to_seconds(time_str):
+# ================= TIME FUNCTIONS =================
 
+def hms_to_seconds(time_str):
     if pd.isna(time_str):
         return 0
-
     time_str = str(time_str).strip()
-
     if time_str in ["-", "", "nan", "NaN", "None"]:
         return 0
-
     try:
-        parts = time_str.split(":")
-        if len(parts) != 3:
-            return 0
-        h, m, s = map(int, parts)
+        h, m, s = map(int, time_str.split(":"))
         return h*3600 + m*60 + s
     except:
         return 0
@@ -30,6 +27,8 @@ def seconds_to_hms(seconds):
     s = seconds % 60
     return f"{h:02}:{m:02}:{s:02}"
 
+
+# ================= ROUTES =================
 
 @app.route("/")
 def home():
@@ -51,8 +50,6 @@ def dashboard():
     agent_df.replace("-", "00:00:00", inplace=True)
     agent_df.fillna("00:00:00", inplace=True)
     cdr_df.fillna("", inplace=True)
-
-    cdr_df["Username"] = cdr_df["Username"].astype(str).str.strip()
 
     data = []
 
@@ -79,7 +76,7 @@ def dashboard():
 
         net_sec = login_sec - break_sec
 
-        agent_calls = cdr_df[cdr_df["Username"] == agent_id]
+        agent_calls = cdr_df[cdr_df["Username"].astype(str).str.strip() == agent_id]
 
         mature_calls = agent_calls[
             agent_calls["Disposition"].astype(str).str.contains(
@@ -87,8 +84,8 @@ def dashboard():
             )
         ]
 
-        total_call = int(len(mature_calls))
-        ib = int(len(mature_calls[mature_calls["Campaign"].astype(str).str.upper() == "CSRINBOUND"]))
+        total_call = len(mature_calls)
+        ib = len(mature_calls[mature_calls["Campaign"].astype(str).str.upper() == "CSRINBOUND"])
         ob = total_call - ib
 
         total_mature += total_call
@@ -98,44 +95,99 @@ def dashboard():
         aht = seconds_to_hms(talk_sec // total_call) if total_call > 0 else "00:00:00"
 
         data.append({
-            "agent_name": agent_id,
-            "full_name": row.get("Agent Full Name", ""),
-            "total_login": seconds_to_hms(login_sec),
-            "net_login": seconds_to_hms(net_sec),
-            "total_break": seconds_to_hms(break_sec),
-            "total_meeting": seconds_to_hms(meeting_sec),
-            "aht": aht,
-            "total_call": total_call,
-            "ib": ib,
-            "ob": ob,
+            "Agent Name": agent_id,
+            "Agent Full Name": row.get("Agent Full Name", ""),
+            "Total Login": seconds_to_hms(login_sec),
+            "Net Login": seconds_to_hms(net_sec),
+            "Total Break": seconds_to_hms(break_sec),
+            "Total Meeting": seconds_to_hms(meeting_sec),
+            "AHT": aht,
+            "Total Call": total_call,
+            "IB Mature": ib,
+            "OB Mature": ob,
             "net_sec": net_sec,
-            "net_class": "green-cell" if net_sec >= 28800 else "",
-            "break_class": "red-cell" if break_sec > 2100 else "",
-            "meeting_class": "red-cell" if meeting_sec > 2100 else ""
+            "break_sec": break_sec,
+            "meeting_sec": meeting_sec
         })
 
-    data = sorted(
-        data,
-        key=lambda x: (x["total_call"], x["net_sec"]),
-        reverse=True
-    )
+    data = sorted(data, key=lambda x: (x["Total Call"], x["net_sec"]), reverse=True)
 
     ob_total = total_mature - ib_total
 
     overall_aht = "00:00:00"
     if len(data) > 0:
         overall_aht = seconds_to_hms(
-            sum([hms_to_seconds(x["aht"]) for x in data]) // len(data)
+            sum([hms_to_seconds(x["AHT"]) for x in data]) // len(data)
         )
+
+    global last_export_data
+    last_export_data = data
 
     return render_template(
         "dashboard.html",
         data=data,
-        total_ivr=int(total_ivr),
-        total_mature=int(total_mature),
-        ib_mature=int(ib_total),
-        ob_mature=int(ob_total),
+        total_ivr=total_ivr,
+        total_mature=total_mature,
+        ib_mature=ib_total,
+        ob_mature=ob_total,
         aht=overall_aht
+    )
+
+
+@app.route("/export_excel")
+def export_excel():
+
+    df = pd.DataFrame(last_export_data)
+
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df_export = df.drop(columns=["net_sec", "break_sec", "meeting_sec"])
+        df_export.to_excel(writer, index=False, sheet_name="Report")
+
+        workbook = writer.book
+        sheet = writer.sheets["Report"]
+
+        from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
+
+        header_fill = PatternFill(start_color="FFD700", end_color="FFD700", fill_type="solid")
+        green_fill = PatternFill(start_color="1B5E1B", end_color="1B5E1B", fill_type="solid")
+        red_fill = PatternFill(start_color="5E1B1B", end_color="5E1B1B", fill_type="solid")
+
+        thin = Side(border_style="thin")
+        border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+        for cell in sheet[1]:
+            cell.fill = header_fill
+            cell.font = Font(bold=True)
+            cell.alignment = Alignment(horizontal="center")
+            cell.border = border
+
+        for row in sheet.iter_rows(min_row=2):
+            for cell in row:
+                cell.alignment = Alignment(horizontal="center")
+                cell.border = border
+
+        for i, row in enumerate(last_export_data, start=2):
+
+            if row["net_sec"] >= 28800:
+                sheet[f"D{i}"].fill = green_fill
+
+            if row["break_sec"] > 2100:
+                sheet[f"E{i}"].fill = red_fill
+
+            if row["meeting_sec"] > 2100:
+                sheet[f"F{i}"].fill = red_fill
+
+    output.seek(0)
+
+    filename = f"Agent_Performance_Report_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.xlsx"
+
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
 
