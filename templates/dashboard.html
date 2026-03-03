@@ -7,14 +7,18 @@
 </head>
 <body>
 
-<div class="animated-header">Agent Performance Dashboard</div>
+<div class="animated-header shine-text">Agent Performance Dashboard</div>
 
 <div class="summary-section">
-    <div class="card">Total IVR<br>{{ total_ivr }}</div>
-    <div class="card">Total Mature<br>{{ total_mature }}</div>
-    <div class="card">IB Mature<br>{{ ib_mature }}</div>
-    <div class="card">OB Mature<br>{{ ob_mature }}</div>
-    <div class="card">AHT<br>{{ aht }}</div>
+    <div class="card counter-card" data-target="{{ total_ivr }}">0<br><span>Total IVR</span></div>
+    <div class="card counter-card" data-target="{{ total_mature }}">0<br><span>Total Mature</span></div>
+    <div class="card counter-card" data-target="{{ ib_mature }}">0<br><span>IB Mature</span></div>
+    <div class="card counter-card" data-target="{{ ob_mature }}">0<br><span>OB Mature</span></div>
+    <div class="card"><span>AHT</span><br>{{ aht }}</div>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search Agent Name or Full Name...">
 </div>
 
 <div class="button-bar">
@@ -39,7 +43,7 @@
 <th>OB Mature</th>
 </tr>
 </thead>
-<tbody>
+<tbody id="tableBody">
 {% for row in data %}
 <tr>
 <td>{{ row.agent_name }}</td>
@@ -60,6 +64,5 @@
 </div>
 
 <script src="/static/script.js"></script>
-
 </body>
 </html>
