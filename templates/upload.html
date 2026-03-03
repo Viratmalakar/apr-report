@@ -29,7 +29,7 @@
 
 </div>
 
-<!-- Cinematic Processing Overlay -->
+<!-- LOADER -->
 <div class="processing-overlay" id="processingOverlay">
     <div class="loader-box">
         <div class="gold-spinner"></div>
@@ -37,6 +37,11 @@
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+document.getElementById("uploadForm").addEventListener("submit", function(){
+    document.getElementById("processingOverlay").style.display = "flex";
+});
+</script>
+
 </body>
 </html>
