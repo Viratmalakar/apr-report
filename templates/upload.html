@@ -17,15 +17,16 @@
     <h3>CDR Report</h3>
     <input type="file" name="cdr_file" required>
 
-    <br><br>
     <button type="submit">Generate Dashboard</button>
 </form>
 
-<div class="loader" id="loader" style="display:none;">
-    <span></span>
+<div class="processing-overlay" id="processingOverlay">
+    <div class="loader-box">
+        <div class="gold-spinner"></div>
+        <p>Generating Performance Dashboard...</p>
+    </div>
 </div>
 
 <script src="/static/script.js"></script>
-
 </body>
 </html>
