@@ -37,55 +37,39 @@ def dashboard():
     agent_file = request.files.get("agent_file")
     cdr_file = request.files.get("cdr_file")
 
-    if not agent_file or not cdr_file:
-        return "Both files required"
-
-    # Read Excel
     agent_df = pd.read_excel(agent_file, header=2)
     cdr_df = pd.read_excel(cdr_file, header=1)
 
     agent_df = clean_columns(agent_df)
     cdr_df = clean_columns(cdr_df)
 
-    # ------------------ Fix ID Format ------------------
-    agent_df["Agent Name"] = (
-        agent_df["Agent Name"]
-        .astype(str)
-        .str.strip()
-        .str.replace(".0", "", regex=False)
-    )
+    # Fix ID format
+    agent_df["Agent Name"] = agent_df["Agent Name"].astype(str).str.replace(".0","", regex=False)
+    cdr_df["Username"] = cdr_df["Username"].astype(str).str.replace(".0","", regex=False)
 
-    cdr_df["Username"] = (
-        cdr_df["Username"]
-        .astype(str)
-        .str.strip()
-        .str.replace(".0", "", regex=False)
-    )
-
-    # ------------------ Time Conversion ------------------
+    # Convert times
     agent_df["Login_sec"] = agent_df["Total Login Time"].apply(time_to_seconds)
 
     agent_df["Break_sec"] = (
-        agent_df["LUNCHBREAK"].apply(time_to_seconds)
-        + agent_df["SHORTBREAK"].apply(time_to_seconds)
-        + agent_df["TEABREAK"].apply(time_to_seconds)
+        agent_df["LUNCHBREAK"].apply(time_to_seconds) +
+        agent_df["SHORTBREAK"].apply(time_to_seconds) +
+        agent_df["TEABREAK"].apply(time_to_seconds)
     )
 
     agent_df["Meeting_sec"] = (
-        agent_df["MEETING"].apply(time_to_seconds)
-        + agent_df["SYSTEMDOWN"].apply(time_to_seconds)
+        agent_df["MEETING"].apply(time_to_seconds) +
+        agent_df["SYSTEMDOWN"].apply(time_to_seconds)
     )
 
     agent_df["Talk_sec"] = agent_df["Total Talk Time"].apply(time_to_seconds)
 
     agent_df["NetLogin_sec"] = agent_df["Login_sec"] - agent_df["Break_sec"]
 
-    # Convert back to hh:mm:ss
     agent_df["Total Break"] = agent_df["Break_sec"].apply(seconds_to_hms)
     agent_df["Total Meeting"] = agent_df["Meeting_sec"].apply(seconds_to_hms)
     agent_df["Total Net Login"] = agent_df["NetLogin_sec"].apply(seconds_to_hms)
 
-    # ------------------ CDR Mature Filter ------------------
+    # Mature calls
     cdr_df["Disposition"] = cdr_df["Disposition"].astype(str).str.lower()
 
     mature_df = cdr_df[
@@ -93,53 +77,29 @@ def dashboard():
         cdr_df["Disposition"].str.contains("transfer", na=False)
     ]
 
-    total_call = (
-        mature_df.groupby("Username")
-        .size()
-        .reset_index(name="Total Call")
-    )
+    total_call = mature_df.groupby("Username").size().reset_index(name="Total Call")
 
-    ib_call = (
-        mature_df[
-            mature_df["Campaign"].astype(str).str.upper() == "CSRINBOUND"
-        ]
-        .groupby("Username")
-        .size()
-        .reset_index(name="IB Mature")
-    )
+    ib_call = mature_df[
+        mature_df["Campaign"].astype(str).str.upper() == "CSRINBOUND"
+    ].groupby("Username").size().reset_index(name="IB Mature")
 
-    # ------------------ Merge ------------------
-    merged = agent_df.merge(
-        total_call,
-        left_on="Agent Name",
-        right_on="Username",
-        how="left"
-    )
+    merged = agent_df.merge(total_call, left_on="Agent Name", right_on="Username", how="left")
+    merged = merged.merge(ib_call, left_on="Agent Name", right_on="Username", how="left")
 
-    merged = merged.merge(
-        ib_call,
-        left_on="Agent Name",
-        right_on="Username",
-        how="left"
-    )
+    merged.drop(columns=["Username_x","Username_y"], errors="ignore", inplace=True)
 
-    merged.drop(columns=["Username_x", "Username_y"], errors="ignore", inplace=True)
-
-    # Fix 0.0 issue
     merged["Total Call"] = merged["Total Call"].fillna(0).astype(int)
     merged["IB Mature"] = merged["IB Mature"].fillna(0).astype(int)
     merged["OB Mature"] = (merged["Total Call"] - merged["IB Mature"]).astype(int)
 
-    # ------------------ AHT ------------------
     merged["AHT_sec"] = merged.apply(
-        lambda x: x["Talk_sec"] / x["Total Call"]
-        if x["Total Call"] > 0 else 0,
+        lambda x: x["Talk_sec"]/x["Total Call"] if x["Total Call"]>0 else 0,
         axis=1
     )
 
     merged["AHT"] = merged["AHT_sec"].apply(seconds_to_hms)
 
-    # ------------------ Summary ------------------
+    # Summary
     total_calls_sum = merged["Total Call"].sum()
     total_talk_sum = merged["Talk_sec"].sum()
 
@@ -148,15 +108,12 @@ def dashboard():
         "total_mature": int(total_calls_sum),
         "ib_mature": int(merged["IB Mature"].sum()),
         "ob_mature": int(merged["OB Mature"].sum()),
-        "aht": seconds_to_hms(
-            total_talk_sum / total_calls_sum
-            if total_calls_sum > 0 else 0
-        ),
+        "aht": seconds_to_hms(total_talk_sum/total_calls_sum if total_calls_sum>0 else 0),
         "login_count": merged["Agent Name"].nunique()
     }
 
-    # ------------------ Final Table ------------------
-    display_cols = [
+    # Visible columns only
+    table = merged[[
         "Agent Name",
         "Agent Full Name",
         "Total Login Time",
@@ -167,18 +124,14 @@ def dashboard():
         "Total Call",
         "IB Mature",
         "OB Mature",
-        "NetLogin_sec",   # for conditional formatting
+        "NetLogin_sec",
         "Break_sec",
         "Meeting_sec"
-    ]
+    ]]
 
-    final_df = merged[display_cols]
-
-    table = final_df.to_dict(orient="records")
-
-    return render_template("dashboard.html", table=table, summary=summary)
-
-# ------------------ Production Safe ------------------
+    return render_template("dashboard.html",
+                           table=table.to_dict(orient="records"),
+                           summary=summary)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
