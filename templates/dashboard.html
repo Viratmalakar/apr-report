@@ -1,55 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Agent Performance Dashboard</title>
-<link rel="stylesheet" href="/static/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="/static/script.js"></script>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-<body class="bg">
+<body>
 
-<div class="top-right-buttons">
-    <button onclick="copyPagePNG()">Copy Page (PNG)</button>
-    <button onclick="resetPage()">Reset</button>
-</div>
-
-<h2 class="header">Agent Performance Dashboard</h2>
-
-<div class="filter-section">
-    <form method="post">
-        <input type="date" name="filter_date">
-        <button type="submit">Apply Date Filter</button>
-    </form>
-</div>
-
-<div class="summary">
-    <div class="box">TOTAL IVR<br>{{summary.total_ivr}}</div>
-    <div class="box">TOTAL MATURE<br>{{summary.total_mature}}</div>
-    <div class="box">IB MATURE<br>{{summary.ib_mature}}</div>
-    <div class="box">OB MATURE<br>{{summary.ob_mature}}</div>
-    <div class="box">AHT<br>{{summary.aht}}</div>
-    <div class="box">LOGIN COUNT<br>{{summary.login_count}}</div>
-</div>
-
-<div class="table-actions">
-    <button onclick="copyTablePNG()">Copy Full Table (PNG)</button>
-</div>
+<h2 style="text-align:center;">Agent Performance Dashboard</h2>
 
 <div class="table-container" id="tableSection">
 <table id="dataTable">
 <thead>
 <tr>
-{% for col in table[0].keys() %}
-<th>{{col}}</th>
-{% endfor %}
+    <th>Agent Name</th>
+    <th>Agent Full Name</th>
+    <th>Total Login</th>
+    <th>Net Login</th>
+    <th>Total Break</th>
+    <th>Total Meeting</th>
+    <th>AHT</th>
+    <th>Total Call</th>
+    <th>IB Mature</th>
+    <th>OB Mature</th>
 </tr>
 </thead>
 <tbody>
 {% for row in table %}
 <tr>
-{% for value in row.values() %}
-<td>{{value}}</td>
-{% endfor %}
+    <td>{{ row["Agent Name"] }}</td>
+    <td>{{ row["Agent Full Name"] }}</td>
+    <td>{{ row["Total Login Time"] }}</td>
+
+    <td class="{% if row['NetLogin_sec'] > 28800 %}green-cell{% endif %}">
+        {{ row["Total Net Login"] }}
+    </td>
+
+    <td class="{% if row['Break_sec'] > 2100 %}red-cell{% endif %}">
+        {{ row["Total Break"] }}
+    </td>
+
+    <td class="{% if row['Meeting_sec'] > 2100 %}red-cell{% endif %}">
+        {{ row["Total Meeting"] }}
+    </td>
+
+    <td>{{ row["AHT"] }}</td>
+    <td>{{ row["Total Call"] }}</td>
+    <td>{{ row["IB Mature"] }}</td>
+    <td>{{ row["OB Mature"] }}</td>
 </tr>
 {% endfor %}
 </tbody>
