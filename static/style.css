@@ -5,8 +5,7 @@ body{
     color:white;
 }
 
-/* ================= HEADER ================= */
-
+/* HEADER */
 .animated-header{
     text-align:center;
     padding:30px 0;
@@ -32,8 +31,7 @@ body{
     100%{left:150%;}
 }
 
-/* ================= UPLOAD PAGE ================= */
-
+/* UPLOAD */
 .upload-wrapper{
     height:75vh;
     display:flex;
@@ -50,40 +48,84 @@ body{
     border:1px solid rgba(255,215,0,0.4);
     box-shadow:0 0 40px rgba(255,215,0,0.15);
     text-align:center;
-    transition:0.3s ease;
 }
 
-.upload-box:hover{
-    transform:translateY(-6px);
-    box-shadow:0 0 60px rgba(255,215,0,0.25);
+/* SUMMARY */
+.summary-section{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    padding:20px;
+    flex-wrap:wrap;
 }
 
-.upload-box h2{
-    margin:20px 0 10px;
-    color:gold;
-}
-
-.upload-box input{
-    margin-bottom:20px;
-    color:white;
-}
-
-.generate-btn{
-    padding:10px 25px;
-    background:linear-gradient(45deg,gold,#ffcc00);
-    border:none;
-    border-radius:10px;
-    font-weight:bold;
-    cursor:pointer;
+.card{
+    padding:20px;
+    border-radius:15px;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.05);
+    border:1px solid gold;
+    text-align:center;
+    min-width:140px;
     transition:0.3s;
 }
 
-.generate-btn:hover{
-    transform:scale(1.05);
+.card:hover{
+    transform:translateY(-6px);
 }
 
-/* ================= LOADER ================= */
+/* SEARCH */
+.search-box{
+    text-align:center;
+    margin:15px;
+}
 
+.search-box input{
+    padding:8px;
+    width:300px;
+}
+
+/* TABLE */
+.table-wrapper{
+    padding:20px;
+}
+
+.table-container{
+    max-height:500px;
+    overflow:auto;
+    border:2px solid gold;
+    border-radius:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#111;
+}
+
+th{
+    background:linear-gradient(45deg,gold,#ffcc00);
+    color:black;
+    padding:12px;
+}
+
+td{
+    padding:10px;
+    border:1px solid rgba(255,255,255,0.1);
+    text-align:center;
+}
+
+.green-cell{
+    background:rgba(0,255,0,0.2);
+    box-shadow:0 0 10px rgba(0,255,0,0.5);
+}
+
+.red-cell{
+    background:rgba(255,0,0,0.2);
+    box-shadow:0 0 10px rgba(255,0,0,0.5);
+}
+
+/* LOADER */
 .processing-overlay{
     position:fixed;
     width:100%;
@@ -95,10 +137,6 @@ body{
     z-index:9999;
 }
 
-.loader-box{
-    text-align:center;
-}
-
 .gold-spinner{
     width:70px;
     height:70px;
@@ -106,15 +144,8 @@ body{
     border-top:6px solid transparent;
     border-radius:50%;
     animation:spin 1s linear infinite;
-    margin:auto;
 }
 
 @keyframes spin{
     to{transform:rotate(360deg);}
-}
-
-.loading-text{
-    margin-top:20px;
-    color:gold;
-    font-size:18px;
 }
