@@ -1,32 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload Reports</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Agent Performance Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<div class="animated-header">Agent Performance Dashboard</div>
+<div class="animated-header shine-text">
+    Agent Performance Dashboard
+</div>
 
-<form action="/dashboard" method="POST" enctype="multipart/form-data"
-      class="upload-box" id="uploadForm">
+<div class="upload-wrapper">
 
-    <h3>APR Report</h3>
-    <input type="file" name="agent_file" required>
+    <form action="/dashboard" method="POST" enctype="multipart/form-data"
+          class="upload-box" id="uploadForm">
 
-    <h3>CDR Report</h3>
-    <input type="file" name="cdr_file" required>
+        <h2>APR Report</h2>
+        <input type="file" name="agent_file" required>
 
-    <button type="submit">Generate Dashboard</button>
-</form>
+        <h2>CDR Report</h2>
+        <input type="file" name="cdr_file" required>
 
+        <button type="submit" class="generate-btn">
+            Generate Dashboard
+        </button>
+
+    </form>
+
+</div>
+
+<!-- Cinematic Processing Overlay -->
 <div class="processing-overlay" id="processingOverlay">
     <div class="loader-box">
         <div class="gold-spinner"></div>
-        <p>Generating Performance Dashboard...</p>
+        <p class="loading-text">Processing Reports...</p>
     </div>
 </div>
 
-<script src="/static/script.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
