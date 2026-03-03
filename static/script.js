@@ -1,25 +1,39 @@
+document.addEventListener("DOMContentLoaded", function(){
+
+    const form = document.getElementById("uploadForm");
+
+    if(form){
+        form.addEventListener("submit", function(){
+            const loader = document.getElementById("loader");
+            if(loader){
+                loader.style.display="flex";
+            }
+        });
+    }
+
+});
+
 async function copyFullTable(){
 
     const table = document.getElementById("tableArea");
 
-    // Expand fully
-    table.style.maxHeight = "none";
-    table.style.overflow = "visible";
+    table.style.maxHeight="none";
+    table.style.overflow="visible";
 
     const canvas = await html2canvas(table, {
-        scale: 3,
+        scale: 5,
         useCORS: true,
-        backgroundColor: null
+        backgroundColor: "#111"
     });
 
-    canvas.toBlob(async function(blob){
-        await navigator.clipboard.write([
-            new ClipboardItem({'image/png': blob})
-        ]);
-        alert("Full table copied with theme!");
-    });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 
-    // Restore
-    table.style.maxHeight = "500px";
-    table.style.overflow = "auto";
+    await navigator.clipboard.write([
+        new ClipboardItem({'image/png': blob})
+    ]);
+
+    alert("Crystal clear table copied!");
+
+    table.style.maxHeight="500px";
+    table.style.overflow="auto";
 }
