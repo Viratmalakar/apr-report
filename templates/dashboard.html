@@ -2,30 +2,55 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
-<div class="animated-header shine-text">Agent Performance Dashboard</div>
+<div class="animated-header shine-text">
+    Agent Performance Dashboard
+</div>
 
+<!-- SUMMARY CARDS -->
 <div class="summary-section">
-    <div class="card counter-card" data-target="{{ total_ivr }}">0<br><span>Total IVR</span></div>
-    <div class="card counter-card" data-target="{{ total_mature }}">0<br><span>Total Mature</span></div>
-    <div class="card counter-card" data-target="{{ ib_mature }}">0<br><span>IB Mature</span></div>
-    <div class="card counter-card" data-target="{{ ob_mature }}">0<br><span>OB Mature</span></div>
-    <div class="card"><span>AHT</span><br>{{ aht }}</div>
+    <div class="card counter-card" data-target="{{ total_ivr }}">
+        <div class="number">0</div>
+        <span>Total IVR</span>
+    </div>
+
+    <div class="card counter-card" data-target="{{ total_mature }}">
+        <div class="number">0</div>
+        <span>Total Mature</span>
+    </div>
+
+    <div class="card counter-card" data-target="{{ ib_mature }}">
+        <div class="number">0</div>
+        <span>IB Mature</span>
+    </div>
+
+    <div class="card counter-card" data-target="{{ ob_mature }}">
+        <div class="number">0</div>
+        <span>OB Mature</span>
+    </div>
+
+    <div class="card">
+        <div class="number">{{ aht }}</div>
+        <span>AHT</span>
+    </div>
 </div>
 
+<!-- SEARCH -->
 <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search Agent Name or Full Name...">
+    <input type="text" id="searchInput" placeholder="Search Agent Name or Full Name">
 </div>
 
+<!-- BUTTONS -->
 <div class="button-bar">
     <button onclick="copyFullTable()">Copy Full Table</button>
     <button onclick="location.href='/'">Reset</button>
 </div>
 
+<!-- TABLE -->
 <div class="table-wrapper">
 <div class="table-container" id="tableArea">
 <table>
@@ -63,6 +88,57 @@
 </div>
 </div>
 
-<script src="/static/script.js"></script>
+<script>
+/* Counter animation */
+document.querySelectorAll(".counter-card").forEach(card=>{
+    let target = +card.dataset.target;
+    let number = card.querySelector(".number");
+    let count = 0;
+    let step = target/40;
+
+    let interval = setInterval(()=>{
+        count += step;
+        if(count >= target){
+            number.innerText = target;
+            clearInterval(interval);
+        } else {
+            number.innerText = Math.floor(count);
+        }
+    },20);
+});
+
+/* Search filter */
+document.getElementById("searchInput").addEventListener("keyup", function(){
+    let value = this.value.toLowerCase();
+    document.querySelectorAll("#tableBody tr").forEach(row=>{
+        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+    });
+});
+
+/* Copy table */
+async function copyFullTable(){
+    const table = document.getElementById("tableArea");
+
+    table.style.maxHeight="none";
+    table.style.overflow="visible";
+
+    const canvas = await html2canvas(table,{
+        scale: window.devicePixelRatio * 3,
+        backgroundColor:"#111"
+    });
+
+    const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+
+    await navigator.clipboard.write([
+        new ClipboardItem({'image/png': blob})
+    ]);
+
+    alert("Table copied in crystal clear quality!");
+
+    table.style.maxHeight="500px";
+    table.style.overflow="auto";
+}
+</script>
+
 </body>
 </html>
