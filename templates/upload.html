@@ -9,7 +9,7 @@
 <div class="animated-header">Agent Performance Dashboard</div>
 
 <form action="/dashboard" method="POST" enctype="multipart/form-data"
-      class="upload-box" onsubmit="showLoader()">
+      class="upload-box" id="uploadForm">
 
     <h3>APR Report</h3>
     <input type="file" name="agent_file" required>
@@ -17,7 +17,7 @@
     <h3>CDR Report</h3>
     <input type="file" name="cdr_file" required>
 
-    <br>
+    <br><br>
     <button type="submit">Generate Dashboard</button>
 </form>
 
@@ -25,11 +25,7 @@
     <span></span>
 </div>
 
-<script>
-function showLoader(){
-    document.getElementById("loader").style.display="flex";
-}
-</script>
+<script src="/static/script.js"></script>
 
 </body>
 </html>
