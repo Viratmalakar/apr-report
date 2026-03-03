@@ -1,76 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Agent Performance Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
-<h1 class="animated-header">Agent Performance Dashboard</h1>
+<div class="animated-header">Agent Performance Dashboard</div>
 
 <div class="summary-section">
-    <div class="card">
-        <h3>Total IVR</h3>
-        <h2 class="counter" data-target="{{ total_ivr }}">0</h2>
-    </div>
-    <div class="card">
-        <h3>Total Mature</h3>
-        <h2 class="counter" data-target="{{ total_mature }}">0</h2>
-    </div>
-    <div class="card">
-        <h3>IB Mature</h3>
-        <h2 class="counter" data-target="{{ ib_mature }}">0</h2>
-    </div>
-    <div class="card">
-        <h3>OB Mature</h3>
-        <h2 class="counter" data-target="{{ ob_mature }}">0</h2>
-    </div>
-    <div class="card">
-        <h3>AHT</h3>
-        <h2>{{ aht }}</h2>
-    </div>
+    <div class="card">Total IVR<br>{{ total_ivr }}</div>
+    <div class="card">Total Mature<br>{{ total_mature }}</div>
+    <div class="card">IB Mature<br>{{ ib_mature }}</div>
+    <div class="card">OB Mature<br>{{ ob_mature }}</div>
+    <div class="card">AHT<br>{{ aht }}</div>
 </div>
 
-<div class="top-buttons">
-    <button onclick="copyFullTable()">Copy Full Table (PNG)</button>
+<div class="button-bar">
+    <button onclick="copyFullTable()">Copy Full Table</button>
+    <button onclick="location.href='/'">Reset</button>
 </div>
 
-<div id="tableWrapper" class="table-container">
-    <table id="reportTable">
-        <thead>
-            <tr>
-                <th>Agent Name</th>
-                <th>Agent Full Name</th>
-                <th>Total Login</th>
-                <th>Net Login</th>
-                <th>Total Break</th>
-                <th>Total Meeting</th>
-                <th>AHT</th>
-                <th>Total Call</th>
-                <th>IB Mature</th>
-                <th>OB Mature</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for row in data %}
-            <tr>
-                <td>{{ row.agent_name }}</td>
-                <td>{{ row.full_name }}</td>
-                <td>{{ row.total_login }}</td>
-                <td class="{{ row.net_class }}">{{ row.net_login }}</td>
-                <td class="{{ row.break_class }}">{{ row.total_break }}</td>
-                <td class="{{ row.meeting_class }}">{{ row.total_meeting }}</td>
-                <td>{{ row.aht }}</td>
-                <td>{{ row.total_call }}</td>
-                <td>{{ row.ib }}</td>
-                <td>{{ row.ob }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<div class="table-wrapper">
+<div class="table-container" id="tableArea">
+<table>
+<thead>
+<tr>
+<th>Agent Name</th>
+<th>Agent Full Name</th>
+<th>Total Login</th>
+<th>Net Login</th>
+<th>Total Break</th>
+<th>Total Meeting</th>
+<th>AHT</th>
+<th>Total Call</th>
+<th>IB Mature</th>
+<th>OB Mature</th>
+</tr>
+</thead>
+<tbody>
+{% for row in data %}
+<tr>
+<td>{{ row.agent_name }}</td>
+<td>{{ row.full_name }}</td>
+<td>{{ row.total_login }}</td>
+<td class="{{ row.net_class }}">{{ row.net_login }}</td>
+<td class="{{ row.break_class }}">{{ row.total_break }}</td>
+<td class="{{ row.meeting_class }}">{{ row.total_meeting }}</td>
+<td>{{ row.aht }}</td>
+<td>{{ row.total_call }}</td>
+<td>{{ row.ib }}</td>
+<td>{{ row.ob }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
 </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="/static/script.js"></script>
+
 </body>
 </html>
