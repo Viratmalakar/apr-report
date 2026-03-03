@@ -5,7 +5,7 @@ body{
     color:white;
 }
 
-/* 🌌 Galaxy Background */
+/* Galaxy */
 body::before{
     content:"";
     position:fixed;
@@ -21,7 +21,6 @@ body::before{
     to{transform:translate(-800px,-800px);}
 }
 
-/* HEADER */
 .animated-header{
     text-align:center;
     padding:25px;
@@ -30,7 +29,6 @@ body::before{
     text-shadow:0 0 20px gold;
 }
 
-/* 🧊 Upload Glass Box */
 .upload-box{
     width:400px;
     margin:100px auto;
@@ -38,44 +36,25 @@ body::before{
     backdrop-filter:blur(20px);
     background:rgba(255,255,255,0.05);
     border-radius:20px;
-    border:1px solid rgba(255,215,0,0.5);
+    border:1px solid gold;
     text-align:center;
-    box-shadow:0 0 40px rgba(255,215,0,0.2);
 }
 
-.upload-box input{
-    margin:15px 0;
-}
-
-.upload-box button{
-    padding:10px 20px;
-    background:gold;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-/* 🧊 Sticky Glass Summary */
 .summary-section{
     display:flex;
     justify-content:center;
     gap:20px;
     padding:20px;
     backdrop-filter:blur(15px);
-    background:rgba(0,0,0,0.5);
-    position:sticky;
-    top:0;
-    z-index:10;
+    background:rgba(0,0,0,0.6);
 }
 
 .card{
     padding:20px;
-    border-radius:15px;
     border:1px solid gold;
-    text-align:center;
+    border-radius:15px;
 }
 
-/* 🟡 Table Section (NO STARS BEHIND) */
 .table-wrapper{
     background:#0a0a0f;
     padding:20px;
@@ -112,11 +91,17 @@ tr:hover{
     transform:scale(1.01);
 }
 
-/* Conditional */
-.green-cell{background:rgba(0,255,0,0.3);}
-.red-cell{background:rgba(255,0,0,0.3);}
+/* 3D Glow */
+.green-cell{
+    background:rgba(0,255,0,0.25);
+    box-shadow:0 0 20px lime, inset 0 0 10px lime;
+}
 
-/* 🔄 Buttons */
+.red-cell{
+    background:rgba(255,0,0,0.25);
+    box-shadow:0 0 20px red, inset 0 0 10px red;
+}
+
 .button-bar{
     text-align:center;
     margin:20px;
@@ -131,7 +116,6 @@ tr:hover{
     margin:5px;
 }
 
-/* 🚀 Premium Loader */
 .loader{
     position:fixed;
     width:100%;
