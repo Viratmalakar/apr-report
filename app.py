@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 import pandas as pd
 from datetime import timedelta
-import os
 
 app = Flask(__name__)
 
@@ -37,17 +36,21 @@ def dashboard():
     agent_file = request.files.get("agent_file")
     cdr_file = request.files.get("cdr_file")
 
+    if not agent_file or not cdr_file:
+        return "Both files required"
+
+    # Read Excel
     agent_df = pd.read_excel(agent_file, header=2)
     cdr_df = pd.read_excel(cdr_file, header=1)
 
     agent_df = clean_columns(agent_df)
     cdr_df = clean_columns(cdr_df)
 
-    # Fix ID format
+    # Fix ID format (numeric + text issue)
     agent_df["Agent Name"] = agent_df["Agent Name"].astype(str).str.replace(".0","", regex=False)
     cdr_df["Username"] = cdr_df["Username"].astype(str).str.replace(".0","", regex=False)
 
-    # Convert times
+    # Time conversion
     agent_df["Login_sec"] = agent_df["Total Login Time"].apply(time_to_seconds)
 
     agent_df["Break_sec"] = (
@@ -62,14 +65,13 @@ def dashboard():
     )
 
     agent_df["Talk_sec"] = agent_df["Total Talk Time"].apply(time_to_seconds)
-
     agent_df["NetLogin_sec"] = agent_df["Login_sec"] - agent_df["Break_sec"]
 
     agent_df["Total Break"] = agent_df["Break_sec"].apply(seconds_to_hms)
     agent_df["Total Meeting"] = agent_df["Meeting_sec"].apply(seconds_to_hms)
     agent_df["Total Net Login"] = agent_df["NetLogin_sec"].apply(seconds_to_hms)
 
-    # Mature calls
+    # Mature call filter
     cdr_df["Disposition"] = cdr_df["Disposition"].astype(str).str.lower()
 
     mature_df = cdr_df[
@@ -83,6 +85,7 @@ def dashboard():
         mature_df["Campaign"].astype(str).str.upper() == "CSRINBOUND"
     ].groupby("Username").size().reset_index(name="IB Mature")
 
+    # Merge
     merged = agent_df.merge(total_call, left_on="Agent Name", right_on="Username", how="left")
     merged = merged.merge(ib_call, left_on="Agent Name", right_on="Username", how="left")
 
@@ -92,8 +95,9 @@ def dashboard():
     merged["IB Mature"] = merged["IB Mature"].fillna(0).astype(int)
     merged["OB Mature"] = (merged["Total Call"] - merged["IB Mature"]).astype(int)
 
+    # AHT
     merged["AHT_sec"] = merged.apply(
-        lambda x: x["Talk_sec"]/x["Total Call"] if x["Total Call"]>0 else 0,
+        lambda x: x["Talk_sec"]/x["Total Call"] if x["Total Call"] > 0 else 0,
         axis=1
     )
 
@@ -108,11 +112,12 @@ def dashboard():
         "total_mature": int(total_calls_sum),
         "ib_mature": int(merged["IB Mature"].sum()),
         "ob_mature": int(merged["OB Mature"].sum()),
-        "aht": seconds_to_hms(total_talk_sum/total_calls_sum if total_calls_sum>0 else 0),
+        "aht": seconds_to_hms(
+            total_talk_sum/total_calls_sum if total_calls_sum > 0 else 0
+        ),
         "login_count": merged["Agent Name"].nunique()
     }
 
-    # Visible columns only
     table = merged[[
         "Agent Name",
         "Agent Full Name",
@@ -129,10 +134,8 @@ def dashboard():
         "Meeting_sec"
     ]]
 
-    return render_template("dashboard.html",
-                           table=table.to_dict(orient="records"),
-                           summary=summary)
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    return render_template(
+        "dashboard.html",
+        table=table.to_dict(orient="records"),
+        summary=summary
+    )
