@@ -1,60 +1,69 @@
 body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
-    background:black;
+    background:#000;
     color:white;
 }
 
-/* Galaxy */
-body::before{
-    content:"";
-    position:fixed;
-    width:200%;
-    height:200%;
-    background:url("https://www.transparenttextures.com/patterns/stardust.png");
-    animation:stars 80s linear infinite;
-    z-index:-2;
-}
-
-@keyframes stars{
-    from{transform:translate(0,0);}
-    to{transform:translate(-800px,-800px);}
-}
-
-.animated-header{
+/* Animated Header Shine */
+.shine-text{
+    position:relative;
     text-align:center;
     padding:25px;
     font-size:30px;
     color:gold;
-    text-shadow:0 0 20px gold;
+    overflow:hidden;
 }
 
-.upload-box{
-    width:400px;
-    margin:100px auto;
-    padding:40px;
-    backdrop-filter:blur(20px);
-    background:rgba(255,255,255,0.05);
-    border-radius:20px;
-    border:1px solid gold;
-    text-align:center;
+.shine-text::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:50%;
+    height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
+    animation:shine 3s infinite;
 }
 
+@keyframes shine{
+    100%{left:150%;}
+}
+
+/* Summary Cards */
 .summary-section{
     display:flex;
     justify-content:center;
     gap:20px;
     padding:20px;
-    backdrop-filter:blur(15px);
-    background:rgba(0,0,0,0.6);
 }
 
 .card{
     padding:20px;
-    border:1px solid gold;
     border-radius:15px;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.05);
+    border:1px solid gold;
+    text-align:center;
+    transition:0.3s;
 }
 
+.card:hover{
+    transform:translateY(-5px);
+}
+
+/* Search */
+.search-box{
+    text-align:center;
+    margin:15px;
+}
+
+.search-box input{
+    padding:8px;
+    width:300px;
+}
+
+/* Table */
 .table-wrapper{
     background:#0a0a0f;
     padding:20px;
@@ -83,57 +92,43 @@ td{
     padding:10px;
     border:1px solid rgba(255,255,255,0.1);
     text-align:center;
-    transition:0.3s;
 }
 
-tr:hover{
-    background:rgba(255,215,0,0.1);
-    transform:scale(1.01);
-}
-
-/* 3D Glow */
+/* Subtle 3D Highlight */
 .green-cell{
-    background:rgba(0,255,0,0.25);
-    box-shadow:0 0 20px lime, inset 0 0 10px lime;
+    background:rgba(0,255,0,0.2);
+    box-shadow:0 0 12px rgba(0,255,0,0.6);
 }
 
 .red-cell{
-    background:rgba(255,0,0,0.25);
-    box-shadow:0 0 20px red, inset 0 0 10px red;
+    background:rgba(255,0,0,0.2);
+    box-shadow:0 0 12px rgba(255,0,0,0.6);
 }
 
-.button-bar{
-    text-align:center;
-    margin:20px;
-}
-
-.button-bar button{
-    padding:8px 15px;
-    background:gold;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin:5px;
-}
-
-.loader{
+/* Processing Overlay */
+.processing-overlay{
     position:fixed;
     width:100%;
     height:100%;
-    background:black;
-    display:flex;
+    background:rgba(0,0,0,0.9);
+    display:none;
     justify-content:center;
     align-items:center;
     z-index:9999;
 }
 
-.loader span{
+.loader-box{
+    text-align:center;
+}
+
+.gold-spinner{
     width:60px;
     height:60px;
     border:6px solid gold;
     border-top:6px solid transparent;
     border-radius:50%;
     animation:spin 1s linear infinite;
+    margin:auto;
 }
 
 @keyframes spin{
