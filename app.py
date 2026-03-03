@@ -3,8 +3,6 @@ import pandas as pd
 
 app = Flask(__name__)
 
-
-# ✅ SAFE TIME CONVERSION FUNCTION (NO CRASH VERSION)
 def hms_to_seconds(time_str):
 
     if pd.isna(time_str):
@@ -12,21 +10,15 @@ def hms_to_seconds(time_str):
 
     time_str = str(time_str).strip()
 
-    # Handle dash / blank / nan
     if time_str in ["-", "", "nan", "NaN", "None"]:
         return 0
-
-    # If already numeric
-    if isinstance(time_str, (int, float)):
-        return int(time_str)
 
     try:
         parts = time_str.split(":")
         if len(parts) != 3:
             return 0
-
         h, m, s = map(int, parts)
-        return h * 3600 + m * 60 + s
+        return h*3600 + m*60 + s
     except:
         return 0
 
@@ -50,19 +42,17 @@ def dashboard():
     agent_file = request.files["agent_file"]
     cdr_file = request.files["cdr_file"]
 
-    # Read files
     agent_df = pd.read_excel(agent_file, header=2)
     cdr_df = pd.read_excel(cdr_file, header=1)
 
-    # Clean column names
     agent_df.columns = agent_df.columns.str.strip()
     cdr_df.columns = cdr_df.columns.str.strip()
 
-    # Replace "-" with 0 for safety
     agent_df.replace("-", "00:00:00", inplace=True)
-
     agent_df.fillna("00:00:00", inplace=True)
     cdr_df.fillna("", inplace=True)
+
+    cdr_df["Username"] = cdr_df["Username"].astype(str).str.strip()
 
     data = []
 
@@ -70,14 +60,10 @@ def dashboard():
     total_mature = 0
     ib_total = 0
 
-    # Convert Username to string once
-    cdr_df["Username"] = cdr_df["Username"].astype(str).str.strip()
-
     for _, row in agent_df.iterrows():
 
         agent_id = str(row["Agent Name"]).strip()
 
-        # ---- TIME CALCULATIONS ----
         login_sec = hms_to_seconds(row["Total Login Time"])
 
         break_sec = (
@@ -93,7 +79,6 @@ def dashboard():
 
         net_sec = login_sec - break_sec
 
-        # ---- CDR MATCHING (FIX FOR NUMERIC + TEXT ID ISSUE) ----
         agent_calls = cdr_df[cdr_df["Username"] == agent_id]
 
         mature_calls = agent_calls[
@@ -103,29 +88,14 @@ def dashboard():
         ]
 
         total_call = int(len(mature_calls))
-
-        ib = int(
-            len(
-                mature_calls[
-                    mature_calls["Campaign"].astype(str)
-                    .str.strip()
-                    .str.upper() == "CSRINBOUND"
-                ]
-            )
-        )
-
+        ib = int(len(mature_calls[mature_calls["Campaign"].astype(str).str.upper() == "CSRINBOUND"]))
         ob = total_call - ib
 
         total_mature += total_call
         ib_total += ib
 
-        # ---- AHT CALCULATION ----
         talk_sec = hms_to_seconds(row.get("Total Talk Time", 0))
-
-        if total_call > 0:
-            aht = seconds_to_hms(talk_sec // total_call)
-        else:
-            aht = "00:00:00"
+        aht = seconds_to_hms(talk_sec // total_call) if total_call > 0 else "00:00:00"
 
         data.append({
             "agent_name": agent_id,
@@ -138,21 +108,26 @@ def dashboard():
             "total_call": total_call,
             "ib": ib,
             "ob": ob,
-
-            # ✅ CONDITIONAL FORMATTING RULES
-            "net_class": "green-cell" if net_sec >= 28800 else "",  # 8 hours
-            "break_class": "red-cell" if break_sec > 2100 else "",  # 35 min
+            "net_sec": net_sec,
+            "net_class": "green-cell" if net_sec >= 28800 else "",
+            "break_class": "red-cell" if break_sec > 2100 else "",
             "meeting_class": "red-cell" if meeting_sec > 2100 else ""
         })
 
+    # 🔥 SORTING LOGIC
+    data = sorted(
+        data,
+        key=lambda x: (x["total_call"], x["net_sec"]),
+        reverse=True
+    )
+
     ob_total = total_mature - ib_total
 
-    # ---- OVERALL AHT ----
     overall_aht = "00:00:00"
-
     if len(data) > 0:
-        total_aht_sec = sum([hms_to_seconds(x["aht"]) for x in data])
-        overall_aht = seconds_to_hms(total_aht_sec // len(data))
+        overall_aht = seconds_to_hms(
+            sum([hms_to_seconds(x["aht"]) for x in data]) // len(data)
+        )
 
     return render_template(
         "dashboard.html",
