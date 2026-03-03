@@ -51,9 +51,14 @@ def dashboard():
     agent_df.fillna("00:00:00", inplace=True)
     cdr_df.fillna("", inplace=True)
 
-    data = []
+    # ================= IVR HIT LOGIC =================
+    total_ivr = len(
+        cdr_df[
+            cdr_df["Skill"].astype(str).str.strip().str.upper() == "INBOUND"
+        ]
+    )
 
-    total_ivr = len(cdr_df)
+    data = []
     total_mature = 0
     ib_total = 0
 
@@ -76,7 +81,9 @@ def dashboard():
 
         net_sec = login_sec - break_sec
 
-        agent_calls = cdr_df[cdr_df["Username"].astype(str).str.strip() == agent_id]
+        agent_calls = cdr_df[
+            cdr_df["Username"].astype(str).str.strip() == agent_id
+        ]
 
         mature_calls = agent_calls[
             agent_calls["Disposition"].astype(str).str.contains(
@@ -85,7 +92,13 @@ def dashboard():
         ]
 
         total_call = len(mature_calls)
-        ib = len(mature_calls[mature_calls["Campaign"].astype(str).str.upper() == "CSRINBOUND"])
+
+        ib = len(
+            mature_calls[
+                mature_calls["Campaign"].astype(str).str.upper() == "CSRINBOUND"
+            ]
+        )
+
         ob = total_call - ib
 
         total_mature += total_call
@@ -110,6 +123,7 @@ def dashboard():
             "meeting_sec": meeting_sec
         })
 
+    # Sort by total calls then net login
     data = sorted(data, key=lambda x: (x["Total Call"], x["net_sec"]), reverse=True)
 
     global last_export_data
@@ -152,13 +166,8 @@ def export_excel():
         from openpyxl.styles import Font, Alignment, Border, Side
         from openpyxl.styles.fills import GradientFill
 
-        # Gold metallic header gradient
         header_fill = GradientFill(stop=("FFF3B0", "D4AF37"))
-
-        # Green 3D gradient
         green_fill = GradientFill(stop=("2ECC71", "145A32"))
-
-        # Red 3D gradient
         red_fill = GradientFill(stop=("E74C3C", "641E16"))
 
         thick = Side(border_style="medium", color="000000")
@@ -186,7 +195,6 @@ def export_excel():
             if row["meeting_sec"] > 2100:
                 sheet[f"F{i}"].fill = red_fill
 
-        # Auto column width
         for col in sheet.columns:
             max_length = 0
             col_letter = col[0].column_letter
