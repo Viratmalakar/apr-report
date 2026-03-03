@@ -1,107 +1,138 @@
-body {
+body{
     margin:0;
-    font-family: 'Segoe UI', sans-serif;
-    background: black;
-    overflow-x:hidden;
+    font-family:'Segoe UI',sans-serif;
+    background:black;
+    color:white;
 }
 
-/* Galaxy Stars */
-body::before {
+/* 🌌 Galaxy Background */
+body::before{
     content:"";
     position:fixed;
     width:200%;
     height:200%;
-    background:transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
-    animation: moveStars 60s linear infinite;
-    z-index:-1;
+    background:url("https://www.transparenttextures.com/patterns/stardust.png");
+    animation:stars 80s linear infinite;
+    z-index:-2;
 }
 
-@keyframes moveStars {
-    from { transform:translate(0,0); }
-    to { transform:translate(-500px,-500px); }
+@keyframes stars{
+    from{transform:translate(0,0);}
+    to{transform:translate(-800px,-800px);}
 }
 
-/* Animated Header */
-.animated-header {
+/* HEADER */
+.animated-header{
     text-align:center;
     padding:25px;
+    font-size:30px;
     color:gold;
-    font-size:32px;
-    text-shadow:0 0 15px gold;
-    animation: glow 2s infinite alternate;
+    text-shadow:0 0 20px gold;
 }
 
-@keyframes glow {
-    from { text-shadow:0 0 10px gold; }
-    to { text-shadow:0 0 30px orange; }
+/* 🧊 Upload Glass Box */
+.upload-box{
+    width:400px;
+    margin:100px auto;
+    padding:40px;
+    backdrop-filter:blur(20px);
+    background:rgba(255,255,255,0.05);
+    border-radius:20px;
+    border:1px solid rgba(255,215,0,0.5);
+    text-align:center;
+    box-shadow:0 0 40px rgba(255,215,0,0.2);
 }
 
-/* Glass Cards */
-.summary-section {
+.upload-box input{
+    margin:15px 0;
+}
+
+.upload-box button{
+    padding:10px 20px;
+    background:gold;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* 🧊 Sticky Glass Summary */
+.summary-section{
     display:flex;
     justify-content:center;
     gap:20px;
+    padding:20px;
+    backdrop-filter:blur(15px);
+    background:rgba(0,0,0,0.5);
     position:sticky;
     top:0;
-    backdrop-filter:blur(15px);
-    background:rgba(255,255,255,0.05);
-    padding:20px;
+    z-index:10;
 }
 
-.card {
+.card{
     padding:20px;
     border-radius:15px;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,215,0,0.6);
-    box-shadow:0 0 25px rgba(255,215,0,0.3);
+    border:1px solid gold;
     text-align:center;
-    color:white;
 }
 
-/* Table */
-.table-container {
+/* 🟡 Table Section (NO STARS BEHIND) */
+.table-wrapper{
+    background:#0a0a0f;
+    padding:20px;
+}
+
+.table-container{
     max-height:500px;
-    overflow-y:auto;
-    margin:20px;
+    overflow:auto;
     border:2px solid gold;
-    border-radius:12px;
+    border-radius:15px;
 }
 
-table {
+table{
     width:100%;
     border-collapse:collapse;
+    background:#111;
 }
 
-th {
+th{
     background:linear-gradient(45deg,gold,#ffcc00);
     color:black;
     padding:12px;
 }
 
-td {
+td{
     padding:10px;
     border:1px solid rgba(255,255,255,0.1);
     text-align:center;
     transition:0.3s;
 }
 
-/* 3D Hover */
-tr:hover {
-    transform:perspective(800px) rotateX(3deg) scale(1.02);
+tr:hover{
     background:rgba(255,215,0,0.1);
+    transform:scale(1.01);
 }
 
 /* Conditional */
-.green-cell {
-    background:rgba(0,255,0,0.3);
+.green-cell{background:rgba(0,255,0,0.3);}
+.red-cell{background:rgba(255,0,0,0.3);}
+
+/* 🔄 Buttons */
+.button-bar{
+    text-align:center;
+    margin:20px;
 }
 
-.red-cell {
-    background:rgba(255,0,0,0.3);
+.button-bar button{
+    padding:8px 15px;
+    background:gold;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin:5px;
 }
 
-/* Loader */
-.loader {
+/* 🚀 Premium Loader */
+.loader{
     position:fixed;
     width:100%;
     height:100%;
@@ -112,15 +143,15 @@ tr:hover {
     z-index:9999;
 }
 
-.loader div {
-    width:50px;
-    height:50px;
-    border:5px solid gold;
-    border-top:5px solid transparent;
+.loader span{
+    width:60px;
+    height:60px;
+    border:6px solid gold;
+    border-top:6px solid transparent;
     border-radius:50%;
     animation:spin 1s linear infinite;
 }
 
-@keyframes spin {
-    to { transform:rotate(360deg); }
+@keyframes spin{
+    to{transform:rotate(360deg);}
 }
