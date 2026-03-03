@@ -15,43 +15,36 @@
     <form action="/dashboard" method="POST" enctype="multipart/form-data"
           class="upload-box" id="uploadForm">
 
-        <h2>APR Report</h2>
-        <input type="file" name="agent_file" required>
+        <!-- APR BOX -->
+        <div class="file-section">
+            <h2>APR Report</h2>
+            <input type="file" name="agent_file" required>
+        </div>
 
-        <h2>CDR Report</h2>
-        <input type="file" name="cdr_file" required>
+        <!-- CDR BOX -->
+        <div class="file-section">
+            <h2>CDR Report</h2>
+            <input type="file" name="cdr_file" required>
+        </div>
 
+        <!-- Generate Button -->
         <button type="submit" class="generate-btn">
             Generate Dashboard
         </button>
+
+        <!-- Live Processing Icon -->
+        <div class="live-processing" id="liveProcessing">
+            <div class="live-dot"></div>
+            <span>Processing...</span>
+        </div>
 
     </form>
 
 </div>
 
-<!-- PROCESSING OVERLAY -->
-<div class="processing-overlay" id="processingOverlay">
-    <div class="loader-box">
-        <div class="gold-spinner"></div>
-        <p class="loading-text">Processing Reports...</p>
-    </div>
-</div>
-
 <script>
-const form = document.getElementById("uploadForm");
-
-form.addEventListener("submit", function(e) {
-
-    e.preventDefault(); // stop immediate submit
-
-    const overlay = document.getElementById("processingOverlay");
-    overlay.style.display = "flex";
-
-    // slight delay so loader actually renders
-    setTimeout(() => {
-        form.submit();
-    }, 200);
-
+document.getElementById("uploadForm").addEventListener("submit", function(){
+    document.getElementById("liveProcessing").style.display = "flex";
 });
 </script>
 
