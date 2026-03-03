@@ -112,6 +112,9 @@ def dashboard():
 
     data = sorted(data, key=lambda x: (x["Total Call"], x["net_sec"]), reverse=True)
 
+    global last_export_data
+    last_export_data = data
+
     ob_total = total_mature - ib_total
 
     overall_aht = "00:00:00"
@@ -119,9 +122,6 @@ def dashboard():
         overall_aht = seconds_to_hms(
             sum([hms_to_seconds(x["AHT"]) for x in data]) // len(data)
         )
-
-    global last_export_data
-    last_export_data = data
 
     return render_template(
         "dashboard.html",
@@ -134,11 +134,12 @@ def dashboard():
     )
 
 
+# ================= EXCEL EXPORT =================
+
 @app.route("/export_excel")
 def export_excel():
 
     df = pd.DataFrame(last_export_data)
-
     output = io.BytesIO()
 
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
@@ -148,24 +149,30 @@ def export_excel():
         workbook = writer.book
         sheet = writer.sheets["Report"]
 
-        from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
+        from openpyxl.styles import Font, Alignment, Border, Side
+        from openpyxl.styles.fills import GradientFill
 
-        header_fill = PatternFill(start_color="FFD700", end_color="FFD700", fill_type="solid")
-        green_fill = PatternFill(start_color="1B5E1B", end_color="1B5E1B", fill_type="solid")
-        red_fill = PatternFill(start_color="5E1B1B", end_color="5E1B1B", fill_type="solid")
+        # Gold metallic header gradient
+        header_fill = GradientFill(stop=("FFF3B0", "D4AF37"))
 
-        thin = Side(border_style="thin")
-        border = Border(left=thin, right=thin, top=thin, bottom=thin)
+        # Green 3D gradient
+        green_fill = GradientFill(stop=("2ECC71", "145A32"))
+
+        # Red 3D gradient
+        red_fill = GradientFill(stop=("E74C3C", "641E16"))
+
+        thick = Side(border_style="medium", color="000000")
+        border = Border(left=thick, right=thick, top=thick, bottom=thick)
 
         for cell in sheet[1]:
             cell.fill = header_fill
             cell.font = Font(bold=True)
-            cell.alignment = Alignment(horizontal="center")
+            cell.alignment = Alignment(horizontal="center", vertical="center")
             cell.border = border
 
         for row in sheet.iter_rows(min_row=2):
             for cell in row:
-                cell.alignment = Alignment(horizontal="center")
+                cell.alignment = Alignment(horizontal="center", vertical="center")
                 cell.border = border
 
         for i, row in enumerate(last_export_data, start=2):
@@ -178,6 +185,15 @@ def export_excel():
 
             if row["meeting_sec"] > 2100:
                 sheet[f"F{i}"].fill = red_fill
+
+        # Auto column width
+        for col in sheet.columns:
+            max_length = 0
+            col_letter = col[0].column_letter
+            for cell in col:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            sheet.column_dimensions[col_letter].width = max_length + 4
 
     output.seek(0)
 
