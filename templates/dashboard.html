@@ -11,48 +11,21 @@
     Agent Performance Dashboard
 </div>
 
-<!-- SUMMARY CARDS -->
 <div class="summary-section">
-    <div class="card counter-card" data-target="{{ total_ivr }}">
-        <div class="number">0</div>
-        <span>Total IVR</span>
-    </div>
-
-    <div class="card counter-card" data-target="{{ total_mature }}">
-        <div class="number">0</div>
-        <span>Total Mature</span>
-    </div>
-
-    <div class="card counter-card" data-target="{{ ib_mature }}">
-        <div class="number">0</div>
-        <span>IB Mature</span>
-    </div>
-
-    <div class="card counter-card" data-target="{{ ob_mature }}">
-        <div class="number">0</div>
-        <span>OB Mature</span>
-    </div>
-
-    <div class="card">
-        <div class="number">{{ aht }}</div>
-        <span>AHT</span>
-    </div>
+    <div class="card"><div class="number">{{ total_ivr }}</div><span>Total IVR</span></div>
+    <div class="card"><div class="number">{{ total_mature }}</div><span>Total Mature</span></div>
+    <div class="card"><div class="number">{{ ib_mature }}</div><span>IB Mature</span></div>
+    <div class="card"><div class="number">{{ ob_mature }}</div><span>OB Mature</span></div>
+    <div class="card"><div class="number">{{ aht }}</div><span>AHT</span></div>
 </div>
 
-<!-- SEARCH -->
-<div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search Agent Name or Full Name">
-</div>
-
-<!-- BUTTONS -->
-<div class="button-bar">
-    <button onclick="copyFullTable()">Copy Full Table</button>
+<div class="button-bar" style="text-align:center;margin:20px;">
+    <button onclick="window.location.href='/export_excel'">Export to Excel</button>
     <button onclick="location.href='/'">Reset</button>
 </div>
 
-<!-- TABLE -->
 <div class="table-wrapper">
-<div class="table-container" id="tableArea">
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -68,77 +41,25 @@
 <th>OB Mature</th>
 </tr>
 </thead>
-<tbody id="tableBody">
+<tbody>
 {% for row in data %}
 <tr>
-<td>{{ row.agent_name }}</td>
-<td>{{ row.full_name }}</td>
-<td>{{ row.total_login }}</td>
-<td class="{{ row.net_class }}">{{ row.net_login }}</td>
-<td class="{{ row.break_class }}">{{ row.total_break }}</td>
-<td class="{{ row.meeting_class }}">{{ row.total_meeting }}</td>
-<td>{{ row.aht }}</td>
-<td>{{ row.total_call }}</td>
-<td>{{ row.ib }}</td>
-<td>{{ row.ob }}</td>
+<td>{{ row["Agent Name"] }}</td>
+<td>{{ row["Agent Full Name"] }}</td>
+<td>{{ row["Total Login"] }}</td>
+<td class="{{ 'green-cell' if row['net_sec'] >= 28800 else '' }}">{{ row["Net Login"] }}</td>
+<td class="{{ 'red-cell' if row['break_sec'] > 2100 else '' }}">{{ row["Total Break"] }}</td>
+<td class="{{ 'red-cell' if row['meeting_sec'] > 2100 else '' }}">{{ row["Total Meeting"] }}</td>
+<td>{{ row["AHT"] }}</td>
+<td>{{ row["Total Call"] }}</td>
+<td>{{ row["IB Mature"] }}</td>
+<td>{{ row["OB Mature"] }}</td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
 </div>
 </div>
-
-<script>
-/* Counter animation */
-document.querySelectorAll(".counter-card").forEach(card=>{
-    let target = +card.dataset.target;
-    let number = card.querySelector(".number");
-    let count = 0;
-    let step = target/40;
-
-    let interval = setInterval(()=>{
-        count += step;
-        if(count >= target){
-            number.innerText = target;
-            clearInterval(interval);
-        } else {
-            number.innerText = Math.floor(count);
-        }
-    },20);
-});
-
-/* Search filter */
-document.getElementById("searchInput").addEventListener("keyup", function(){
-    let value = this.value.toLowerCase();
-    document.querySelectorAll("#tableBody tr").forEach(row=>{
-        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
-    });
-});
-
-/* Copy table */
-async function copyFullTable(){
-    const table = document.getElementById("tableArea");
-
-    table.style.maxHeight="none";
-    table.style.overflow="visible";
-
-    const canvas = await html2canvas(table,{
-        scale: window.devicePixelRatio * 3,
-        backgroundColor:"#111"
-    });
-
-    const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
-
-    await navigator.clipboard.write([
-        new ClipboardItem({'image/png': blob})
-    ]);
-
-    alert("Table copied in crystal clear quality!");
-
-    table.style.maxHeight="500px";
-    table.style.overflow="auto";
-}
-</script>
 
 </body>
 </html>
