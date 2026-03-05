@@ -1,52 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Agent Performance Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<title>Agent Performance Dashboard</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
+
 <body>
 
-<div class="animated-header shine-text">
-    Agent Performance Dashboard
-</div>
+<h1 class="animated-header">Agent Performance Dashboard</h1>
 
-<div class="upload-wrapper">
 
-    <form action="/dashboard" method="POST" enctype="multipart/form-data"
-          class="upload-box" id="uploadForm">
+<form action="/dashboard" method="POST" enctype="multipart/form-data">
 
-        <!-- APR BOX -->
-        <div class="file-section">
-            <h2>APR Report</h2>
-            <input type="file" name="agent_file" required>
-        </div>
+<div class="upload-box">
 
-        <!-- CDR BOX -->
-        <div class="file-section">
-            <h2>CDR Report</h2>
-            <input type="file" name="cdr_file" required>
-        </div>
+<div class="file-box">
 
-        <!-- Generate Button -->
-        <button type="submit" class="generate-btn">
-            Generate Dashboard
-        </button>
+<h3>APR Report</h3>
 
-        <!-- Live Processing Icon -->
-        <div class="live-processing" id="liveProcessing">
-            <div class="live-dot"></div>
-            <span>Processing...</span>
-        </div>
-
-    </form>
+<input type="file" name="agent_file" required>
 
 </div>
+
+
+<div class="file-box">
+
+<h3>CDR Report</h3>
+
+<input type="file" name="cdr_file" required>
+
+</div>
+
+
+<button id="generateBtn" type="submit">
+
+Generate Report
+
+</button>
+
+
+<div id="processing" class="processing" style="display:none">
+
+⚡ Processing Live...
+
+</div>
+
+</div>
+
+</form>
+
+
 
 <script>
-document.getElementById("uploadForm").addEventListener("submit", function(){
-    document.getElementById("liveProcessing").style.display = "flex";
-});
+
+document.querySelector("form").addEventListener("submit",function(){
+
+document.getElementById("generateBtn").innerText="Processing..."
+
+document.getElementById("processing").style.display="block"
+
+})
+
 </script>
 
+
 </body>
+
 </html>
